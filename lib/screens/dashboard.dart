@@ -1,9 +1,11 @@
 //import 'dart:developer';
-//hi
+import 'package:cloudinfotech/login.dart';
+import 'package:cloudinfotech/screens/sign_up_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
-import 'appbar.dart';
+import '../components/appbar.dart';
+import 'gst_operation.dart';
 
 class Dashboard extends StatefulWidget {
   @override
@@ -14,19 +16,19 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CommonAppBar(),
+      appBar: CommonAppBar("Dashboard"),
       body: Container(
         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 2.0),
         child: GridView.count(
           crossAxisCount: 2,
           padding: EdgeInsets.all(3.0),
           children: <Widget>[
-            makeDashboardItem("Accept Request", 1, Icons.supervisor_account),
-            makeDashboardItem("Students List", 2, Icons.view_list_outlined),
-            makeDashboardItem("Cancelled Meals", 3, Icons.no_meals),
+            makeDashboardItem("Items Cost", 1, Icons.currency_rupee),
             makeDashboardItem(
-                "Room Allocation", 4, Icons.airline_seat_individual_suite),
-            makeDashboardItem("Send Message", 5, Icons.sms),
+                "GST Opeations", 2, Icons.currency_exchange_outlined),
+            makeDashboardItem("Items to Order", 3, Icons.grading),
+            makeDashboardItem("Daily Expense", 4, Icons.wallet),
+            makeDashboardItem("Invoice & Receipt", 5, Icons.receipt_long),
             makeDashboardItem("Profile", 6, Icons.account_balance_outlined)
           ],
         ),
@@ -50,24 +52,25 @@ class _DashboardState extends State<Dashboard> {
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
           onTap: () {
-            // if (id == 1) {
-            //   Navigator.of(context).push(
-            //     MaterialPageRoute(
-            //       builder: (context) => HomePage(),
-            //     ),
-            //   );
-            // }
-
-            //  else if (id == 2) {
-            //   Navigator.of(context)
-            //       .push(MaterialPageRoute(builder: (context) => ()));
-            // } else if (id == 3) {
+            if (id == 2) {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => GstOperation(),
+                ),
+              );
+            } else if (id == 3) {
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => SignInScreen()));
+            }
+            // else if (id == 3) {
             //   Navigator.of(context)
             //       .push(MaterialPageRoute(builder: (context) => BookMeal()));
-            // } else if (id == 4) {
-            //   Navigator.of(context)
-            //       .push(MaterialPageRoute(builder: (context) => Temp()));
-            // } else if (id == 5) {
+            // }
+            else if (id == 4) {
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => MyLoginPage()));
+            }
+            // else if (id == 5) {
             //   Navigator.of(context)
             //       .push(MaterialPageRoute(builder: (context) => Message()));
             // } else if (id == 6) {

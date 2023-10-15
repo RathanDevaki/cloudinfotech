@@ -4,9 +4,9 @@ import 'package:loading_animations/loading_animations.dart';
 import '../../../components/custom_surfix_icon.dart';
 import '../../../components/default_button.dart';
 import '../../../components/form_error.dart';
-import '../../../constants.dart';
+import '../../../helper/constants.dart';
 import '../../../helper/keyboard.dart';
-import '../../../size_config.dart';
+import '../../../helper/size_config.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../dashboard.dart';
@@ -64,96 +64,118 @@ class _SignFormState extends State<SignForm> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Form(
       key: _formKey,
-      child: Column(
-        children: [
-          SizedBox(height: getProportionateScreenHeight(30)),
-          buildEmailFormField(),
-          SizedBox(height: getProportionateScreenHeight(30)),
-          buildPasswordFormField(),
-          SizedBox(height: getProportionateScreenHeight(30)),
-          Row(
-            children: [
-              Checkbox(
-                value: remember,
-                activeColor: kPrimaryColor,
-                onChanged: (value) {
-                  setState(() {
-                    remember = value;
-                  });
-                },
-              ),
-              Text("Remember me"),
-              Spacer(),
-              SizedBox(height: getProportionateScreenHeight(70)),
-              GestureDetector(
-                onTap: () {},
-                // onTap: () => Navigator.pushNamed(
-                //     context, ForgotPasswordScreen.routeName),
-                child: Text(
-                  "Forgot Password",
-                  style: TextStyle(decoration: TextDecoration.underline),
-                ),
-              )
-            ],
-          ),
-          FormError(errors: errors),
-          SizedBox(height: getProportionateScreenHeight(20)),
-          showProgress == false
-              ? DefaultButton(
-                  text: "Continue",
-                  press: () async {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
-                      // if all are valid then go to success screen
-                      KeyboardUtil.hideKeyboard(context);
-                      setState(() {
-                        showProgress = true;
-                      });
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(height: getProportionateScreenHeight(30)),
+            buildEmailFormField(),
+            SizedBox(height: getProportionateScreenHeight(30)),
+            buildPasswordFormField(),
+            SizedBox(height: getProportionateScreenHeight(30)),
+            // Row(
+            //   children: [
+            //     Checkbox(
+            //       value: remember,
+            //       activeColor: kPrimaryColor,
+            //       onChanged: (value) {
+            //         setState(() {
+            //           remember = value;
+            //         });
+            //       },
+            //     ),
+            //     Text("Remember me"),
+            //     Spacer(),
+            //     SizedBox(height: getProportionateScreenHeight(70)),
+            //     GestureDetector(
+            //       onTap: () {},
+            //       // onTap: () => Navigator.pushNamed(
+            //       //     context, ForgotPasswordScreen.routeName),
+            //       child: Text(
+            //         "Forgot Password",
+            //         style: TextStyle(decoration: TextDecoration.underline),
+            //       ),
+            //     )
+            //   ],
+            // ),
+            FormError(errors: errors),
+            SizedBox(height: getProportionateScreenHeight(20)),
+            showProgress == false
+                ? GestureDetector(
+                    onTap: () async {
+                      if (_formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
+                        // if all are valid then go to success screen
+                        KeyboardUtil.hideKeyboard(context);
+                        setState(() {
+                          showProgress = true;
+                        });
 
-                      try {
-                        final newUser = await _auth.signInWithEmailAndPassword(
-                            email: email.toString(),
-                            password: password.toString());
+                        try {
+                          final newUser =
+                              await _auth.signInWithEmailAndPassword(
+                                  email: email.toString(),
+                                  password: password.toString());
 
-                        print(newUser.toString());
+                          print(newUser.toString());
 
-                        if (newUser != null) {
+                          if (newUser != null) {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(successSnackBar);
+                            setState(() {
+                              showProgress = false;
+                            });
+                            Navigator.pushReplacementNamed(
+                                context, '/dashboard');
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => Dashboard(),
+                            //   ),
+                            // );
+                          } else {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(failureSnackBar);
+                            setState(() {
+                              showProgress = false;
+                            });
+                          }
+                        } catch (e) {
                           ScaffoldMessenger.of(context)
-                              .showSnackBar(successSnackBar);
+                              .showSnackBar(failureSnackBar);
                           setState(() {
                             showProgress = false;
                           });
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Dashboard(),
-                            ),
-                          );
-                        } else {
-                          // ScaffoldMessenger.of(context)
-                          //     .showSnackBar(failureSnackBar);
-                          // setState(() {
-                          //   showProgress = false;
-                          // });
                         }
-                      } catch (e) {
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(failureSnackBar);
-                        setState(() {
-                          showProgress = false;
-                        });
+                        //Navigator.pushNamed(context, LoginSuccessScreen.routeName);
                       }
-                      //Navigator.pushNamed(context, LoginSuccessScreen.routeName);
-                    }
-                  },
-                )
-              : LoadingJumpingLine.circle(
-                  duration: Duration(milliseconds: 1000),
-                  backgroundColor: Colors.grey,
-                ),
-        ],
+                    },
+                    child: Container(
+                      height: 60.0,
+                      width: size.width,
+                      decoration: BoxDecoration(
+                          color: Color(0xFF653bbf),
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(15.0))),
+                      child: Center(
+                        child: Text(
+                          'Sign In',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15.0),
+                        ),
+                      ),
+                    ),
+                  )
+                : LoadingJumpingLine.circle(
+                    duration: Duration(milliseconds: 800),
+                    backgroundColor: Colors.grey,
+                  ),
+          ],
+        ),
       ),
     );
   }
